@@ -191,7 +191,7 @@ m2225 0 l0 -820 -227 -3 -228 -2 0 825 0 825 228 -2 227 -3 0 -820z m-1365
     if (els.value.value.trim() === "" || els.b.value.trim() === "") {
   remaining.textContent = "— km to go";
 } else {
-  const distance = b - v;
+const distance = b * (1 - v / a);
 
   remaining.textContent = Number.isFinite(distance)
     ? `${distance.toLocaleString(undefined, { maximumFractionDigits: 2 })} km to go`
