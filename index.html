@@ -15,15 +15,51 @@
   }
   .widget { width:min(680px,100%); padding:25px 24px 20px; border:1px solid #ffffff18; border-radius:22px;
     background:linear-gradient(145deg,color-mix(in srgb,var(--widget-bg) 94%,white),color-mix(in srgb,var(--widget-bg) 72%,black)); box-shadow:0 22px 70px #0009; }
-  .top { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:23px; }
+  .top {
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:12px;
+  margin-bottom:23px;
+}
+
+.color-picker {
+  justify-self:start;
+}
+
+.remaining {
+  justify-self:center;
+  color:#cbd3de;
+  font-size:13px;
+  font-weight:500;
+  letter-spacing:.02em;
+  white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+
+.edit-toggle {
+  justify-self:end;
+}
   .top-actions { display:flex; align-items:center; gap:10px; }
   .color-picker { position:relative; display:block; flex:0 0 22px; width:22px; height:22px; padding:0; border:1px solid #ffffff65; border-radius:50%; cursor:pointer;
     background-color:#08090b; background-image:conic-gradient(#111 0 25%,#777 0 50%,#222 0 75%,#aaa 0); background-size:6px 6px;
     box-shadow:0 0 0 2px #ffffff12; image-rendering:pixelated; overflow:hidden; }
   .color-picker input { position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; }
-  .edit-toggle { border:1px solid #ffffff24; background:#ffffff08; color:#cbd3de; border-radius:999px; padding:7px 11px;
-    font:600 11px Inter,ui-sans-serif,system-ui,sans-serif; letter-spacing:.04em; cursor:pointer; }
-  .edit-toggle:hover { background:#ffffff14; }
+  .edit-toggle {
+  border:none;
+  background:transparent;
+  color:#cbd3de;
+  padding:0;
+  font:500 25px/1 Inter,ui-sans-serif,system-ui,sans-serif;
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+}
+
+.edit-toggle:hover {
+  color:#ffffff;
+}
+.edit-toggle:hover { background:#ffffff14; }
   .eyebrow { color:#9ca5b2; font-size:11px; letter-spacing:.19em; text-transform:uppercase; }
   .track-wrap { position:relative; padding:18px 8px 13px; }
   .track { height:5px; background:#353c47; border-radius:99px; position:relative; overflow:visible; }
@@ -48,14 +84,17 @@
 </head>
 <body>
 <main class="widget" aria-label="Progress tracker">
+  
   <div class="top">
-    <div class="top-actions">
-      <label class="color-picker" title="Choose background colour" aria-label="Choose background colour">
-        <input id="backgroundColor" type="color" value="#171b22" aria-label="Background colour">
-      </label>
-      <button class="edit-toggle" id="editToggle" type="button" aria-expanded="false">SHOW MORE</button>
-    </div>
-  </div>
+  <label class="color-picker" title="Choose background colour" aria-label="Choose background colour">
+    <input id="backgroundColor" type="color" value="#171b22" aria-label="Background colour">
+  </label>
+
+  <div class="remaining" id="remaining">854 km to go</div>
+
+  <button class="edit-toggle" id="editToggle" type="button"
+    aria-expanded="false" aria-label="Show more" title="Show more">⌄</button>
+</div>
 
   <div class="track-wrap">
     <div class="track" aria-label="Progress">
@@ -129,6 +168,7 @@ m2225 0 l0 -820 -227 -3 -228 -2 0 825 0 825 228 -2 227 -3 0 -820z m-1365
   const ids = ["value", "a", "b"];
   const els = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
   const fill = document.getElementById("fill");
+  const remaining = document.getElementById("remaining");
   const editor = document.getElementById("editor");
   const editToggle = document.getElementById("editToggle");
   const backgroundColor = document.getElementById("backgroundColor");
@@ -148,6 +188,15 @@ m2225 0 l0 -820 -227 -3 -228 -2 0 825 0 825 228 -2 227 -3 0 -820z m-1365
     const v = Number(els.value.value);
     const a = Number(els.a.value);
     const b = Number(els.b.value);
+    if (els.value.value.trim() === "" || els.b.value.trim() === "") {
+  remaining.textContent = "— km to go";
+} else {
+  const distance = b - v;
+
+  remaining.textContent = Number.isFinite(distance)
+    ? `${distance.toLocaleString(undefined, { maximumFractionDigits: 2 })} km to go`
+    : "— km to go";
+}
 
     if (![v, a, b].every(Number.isFinite) || a === 0) {
       fill.style.width = "0%";
@@ -179,11 +228,14 @@ m2225 0 l0 -820 -227 -3 -228 -2 0 825 0 825 228 -2 227 -3 0 -820z m-1365
 
   ids.forEach(id => els[id].addEventListener("input", update));
 
-  editToggle.addEventListener("click", () => {
-    const isOpen = editor.classList.toggle("open");
-    editToggle.textContent = isOpen ? "SHOW LESS" : "SHOW MORE";
-    editToggle.setAttribute("aria-expanded", String(isOpen));
-  });
+editToggle.addEventListener("click", () => {
+  const isOpen = editor.classList.toggle("open");
+
+  editToggle.textContent = isOpen ? "⌃" : "⌄";
+  editToggle.setAttribute("aria-expanded", String(isOpen));
+  editToggle.setAttribute("aria-label", isOpen ? "Show less" : "Show more");
+  editToggle.setAttribute("title", isOpen ? "Show less" : "Show more");
+});
 
   backgroundColor.addEventListener("input", () => {
     document.documentElement.style.setProperty("--widget-bg", backgroundColor.value);
