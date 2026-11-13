@@ -8,11 +8,16 @@
 <style>
   :root { color-scheme: dark; --bg:#090a0d; --panel:#12151b; --muted:#8b929e; --line:#343b46; --accent:#e8edf4; --widget-bg:#171b22; }
   * { box-sizing:border-box; }
-  body {
-    margin:0; min-height:100vh; display:grid; place-items:center; padding:18px;
-    background:radial-gradient(ellipse at 50% 0%, #202631 0%, #101319 42%, var(--bg) 78%);
-    color:#f3f5f8; font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
-  }
+ body {
+  margin:0;
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:0;
+  background:transparent;
+  color:#f3f5f8;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
   .widget { width:min(680px,100%); padding:25px 24px 20px; border:1px solid #ffffff18; border-radius:22px;
     background:linear-gradient(145deg,color-mix(in srgb,var(--widget-bg) 94%,white),color-mix(in srgb,var(--widget-bg) 72%,black)); box-shadow:0 22px 70px #0009; }
   .top {
